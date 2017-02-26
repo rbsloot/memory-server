@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "sourceMap": true,
+        "declaration": false,
+        "moduleResolution": "node",
+        "types" : ["node"]
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
