@@ -1,11 +1,13 @@
 {
     "compilerOptions": {
         "outDir": "./dist",
+        "rootDir": "./app",
         "target": "es2016",
-        "sourceMap": true,
         "declaration": false,
         "moduleResolution": "node",
-        "types" : ["node"]
+        "typeRoots": [
+            "node_modules/@types"
+        ]
     },
     "exclude": [
         "node_modules"

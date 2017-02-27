@@ -2,14 +2,24 @@
   "name": "memory-server",
   "version": "1.0.0",
   "description": "Memory game server",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "node dist/index.js",
-    "tsc": "tsc"
+    "start": "concurrently \"npm run tsc:w\" \"npm run node:w\"",
+    "tsc": "tsc",
+    "tsc:w": "tsc -w",
+    "node": "node dist/server.js",
+    "node:w": "nodemon ./dist/server.js"
   },
   "author": "Remi",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^7.0.5",
+    "concurrently": "^3.3.0",
+    "nodemon": "^1.11.0",
     "typescript": "^2.2.1"
+  },
+  "dependencies": {
+    "@types/socket.io": "^1.4.28",
+    "socket.io": "^1.7.3"
   }
 }
