@@ -1,9 +1,9 @@
 const io:SocketIO.Server = require('socket.io')();
-const port = 3000;
 
-io.on('connection', client => {
-    console.log(client.id);
-});
+import { Memory } from './room/memory.model';
+import { ServerConfig } from './server.config';
 
-io.listen(port);
-console.log(`IO listening on port ${port}`);
+const memory = new Memory(io.of('/memory'));
+
+io.listen(ServerConfig.io.port);
+console.log(`IO listening on port ${ServerConfig.io.port}`);
