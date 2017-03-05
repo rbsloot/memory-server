@@ -1,4 +1,5 @@
-import { GameRoom } from './game-room.model';
+import { BaseSocketService } from '../services/base-socket.service';
+import { GameRoom, CREATE_EVENT, JOIN_EVENT } from './game-room.model';
 
 interface GameData {
     theme: string;
@@ -29,13 +30,16 @@ export class Memory {
         const room = this.rooms[newRoomId] = new GameRoom(this.io, newRoomId, gameData.theme);
         console.log('NEW GAME ROOM', newRoomId);
 
-        socket.emit('created', { message: 'Created new room', id: newRoomId })
-        room.join(socket);
+        socket.emit(CREATE_EVENT, { id: newRoomId });
     }
 
     private joinGame(socket: SocketIO.Socket, roomId: string) {
         const room = this.rooms[roomId];
-        room.join(socket);
+        if(room) {
+            room.join(socket);
+        } else {
+            BaseSocketService.emitError(JOIN_EVENT, { message: `Game with id '${roomId}' is not available` }, socket);
+        }
     }
 
     private onDisconnect() {

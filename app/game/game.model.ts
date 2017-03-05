@@ -4,7 +4,7 @@ import { Card } from './card.model';
 // For future improvements, remove players as contructor input and make it a room (socket room)
 
 export class Game {
-    constructor(public theme: string, public players?: Player[]) {
+    constructor(public theme: string, public players: Player[] = []) {
 
     }
 
