@@ -1,12 +1,19 @@
 import { BaseSocketService } from '../services/base-socket.service';
 import { GameRoom, CREATE_EVENT, JOIN_EVENT } from './game-room.model';
+import { Player } from '../game/player.model';
 
 interface GameData {
     theme: string;
     socketId: string;
 }
 
+interface JoinData {
+    gameId: string;
+    username: string;
+}
+
 export class Memory {
+    private players: { [socketId: string]: Player } = {};
     private rooms: { [roomId: string]: GameRoom } = {};
     private roomId = 0;
 
@@ -20,8 +27,9 @@ export class Memory {
 
             socket.on('newGame', this.onNewGame.bind(this, socket));
             socket.on('joinGame', this.joinGame.bind(this, socket));
+            socket.on('leaveGame', this.leaveGame.bind(this, socket));
 
-            socket.on('disconnect', this.onDisconnect.bind(this));
+            socket.on('disconnect', this.onDisconnect.bind(this, socket));
         });
     }
 
@@ -33,16 +41,34 @@ export class Memory {
         socket.emit(CREATE_EVENT, { id: newRoomId });
     }
 
-    private joinGame(socket: SocketIO.Socket, roomId: string) {
+    private joinGame(socket: SocketIO.Socket, { gameId: roomId, username }: JoinData) {
         const room = this.rooms[roomId];
         if(room) {
-            room.join(socket);
+            const player = this.players[socket.id] || new Player(username || socket.id);
+            room.join(socket, player);
+            player.addRoom(roomId);
+
+            if(!this.players[socket.id]) {
+                this.players[socket.id] = player;
+            }
         } else {
             BaseSocketService.emitError(JOIN_EVENT, { message: `Game with id '${roomId}' is not available` }, socket);
         }
     }
 
-    private onDisconnect() {
-        console.log('DISCONNECT MEMORY');
+    leaveGame(socket: SocketIO.Socket, roomId: string) {
+        const player = this.players[socket.id];
+        if(!player) return;
+        player.removeRoom(roomId);
+        this.rooms[roomId].leave(player);
+    }
+
+    private onDisconnect(socket: SocketIO.Socket) {
+        console.log('DISCONNECT');
+        const player = this.players[socket.id];
+        if(!player) return;
+        for(let roomId of player.activeRoomIds) {
+            this.rooms[roomId].leave(player, true);
+        }
     }
 }
