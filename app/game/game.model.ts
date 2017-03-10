@@ -2,10 +2,15 @@ import { Player } from './player.model';
 import { Card } from './card.model';
 
 // For future improvements, remove players as contructor input and make it a room (socket room)
+const THEME_CARDS = {
+    test: ['img1.jpg', 'img2.jpg', 'img3.png']
+};
 
 export class Game {
-    constructor(public theme: string, public players: Player[] = []) {
+    cards: Card[];
 
+    constructor(public theme: string, public players: Player[] = []) {
+        this.cards = this.loadCards(theme);
     }
 
     start() {
@@ -19,6 +24,17 @@ export class Game {
     removePlayer(player: Player) {
         const indexToRemove = this.players.findIndex(plr => plr.username === player.username);
         this.players.splice(indexToRemove, 1);
+    }
+
+    private loadCards(theme: string) {
+        theme = theme.toLowerCase();
+        const cards: Card[] = [];
+
+        for(let card of THEME_CARDS[theme]) {
+            cards.push(new Card(`${theme}/${card}`));
+        }
+
+        return cards;
     }
 
     private shuffle(array) {

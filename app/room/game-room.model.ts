@@ -20,7 +20,7 @@ export class GameRoom {
         socket.join(this.roomId, (error) => {
             this.game.addPlayer(newPlayer);
 
-            socket.emit(JOIN_EVENT, { players: this.game.players, cards: [] });
+            socket.emit(JOIN_EVENT, { players: this.game.players, cards: this.game.cards });
             socket.broadcast.in(this.roomId).emit(PLAYER_JOIN_EVENT, { username: newPlayer.username });
         });
     }
