@@ -4,11 +4,12 @@
   "description": "Memory game server",
   "main": "dist/server.js",
   "scripts": {
-    "start": "concurrently \"npm run tsc:w\" \"npm run node:w\"",
+    "start": "concurrently \"npm run tsc:w\" \"npm run app:w\" \"npm run card-server\"",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
-    "node": "node dist/server.js",
-    "node:w": "nodemon ./dist/server.js"
+    "app": "node dist/server.js",
+    "app:w": "nodemon ./dist/server.js",
+    "card-server": "node card-server/server.js"
   },
   "author": "Remi",
   "license": "ISC",

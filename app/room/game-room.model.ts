@@ -18,9 +18,10 @@ export class GameRoom {
 
     join(socket: SocketIO.Socket, newPlayer: Player) {
         socket.join(this.roomId, (error) => {
+            console.log('PLAYER JOINED', newPlayer.username);
             this.game.addPlayer(newPlayer);
 
-            socket.emit(JOIN_EVENT, { players: this.game.players, cards: this.game.cards });
+            socket.emit(JOIN_EVENT, this.game.state);
             socket.broadcast.in(this.roomId).emit(PLAYER_JOIN_EVENT, { username: newPlayer.username });
         });
     }
