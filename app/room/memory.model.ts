@@ -29,6 +29,8 @@ export class Memory {
             socket.on('joinGame', this.joinGame.bind(this, socket));
             socket.on('leaveGame', this.leaveGame.bind(this, socket));
 
+            socket.on('startGame', this.onStartGame.bind(this, socket));
+
             socket.on('disconnect', this.onDisconnect.bind(this, socket));
         });
     }
@@ -56,11 +58,15 @@ export class Memory {
         }
     }
 
-    leaveGame(socket: SocketIO.Socket, roomId: string) {
+    private leaveGame(socket: SocketIO.Socket, roomId: string) {
         const player = this.players[socket.id];
         if(!player) return;
         player.removeRoom(roomId);
         this.rooms[roomId].leave(player);
+    }
+
+    private onStartGame(socket: SocketIO.Socket, roomId: string) {
+        this.rooms[roomId].start();
     }
 
     private onDisconnect(socket: SocketIO.Socket) {

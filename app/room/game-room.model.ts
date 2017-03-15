@@ -6,6 +6,7 @@ export const JOIN_EVENT = 'joinGame';
 export const PLAYER_JOIN_EVENT = 'newPlayer';
 export const LEAVE_EVENT = 'playerLeave';
 export const DISCONNECTED_EVENT = 'playerDisconnected';
+export const START_GAME_EVENT = 'startGame';
 
 // TODO listen for room joiners
 
@@ -30,5 +31,10 @@ export class GameRoom {
         console.log(`Player ${player.username} ${disconnected ? 'disconnected' : 'left'}`);
         this.game.removePlayer(player);
         this.io.in(this.roomId).emit(disconnected ? DISCONNECTED_EVENT : LEAVE_EVENT, { username: player.username });
+    }
+
+    start() {
+        this.game.start();
+        this.io.in(this.roomId).emit(START_GAME_EVENT, this.game.state);
     }
 }
