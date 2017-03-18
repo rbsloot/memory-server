@@ -1,5 +1,5 @@
 import { BaseSocketService } from '../services/base-socket.service';
-import { GameRoom, CREATE_EVENT, JOIN_EVENT } from './game-room.model';
+import { GameRoom, CREATE_EVENT, JOIN_EVENT, SELECT_CARD_EVENT } from './game-room.model';
 import { Player } from '../game/player.model';
 
 interface GameData {
@@ -29,7 +29,8 @@ export class Memory {
             socket.on('joinGame', this.joinGame.bind(this, socket));
             socket.on('leaveGame', this.leaveGame.bind(this, socket));
 
-            socket.on('startGame', this.onStartGame.bind(this, socket));
+            socket.on('startGame', this.onStartGame.bind(this));
+            socket.on(SELECT_CARD_EVENT, this.onSelectCard.bind(this, socket));
 
             socket.on('disconnect', this.onDisconnect.bind(this, socket));
         });
@@ -65,12 +66,16 @@ export class Memory {
         this.rooms[roomId].leave(player);
     }
 
-    private onStartGame(socket: SocketIO.Socket, roomId: string) {
+    private onStartGame(roomId: string) {
         this.rooms[roomId].start();
     }
 
+    private onSelectCard(socket: SocketIO.Socket, roomId: string, cardId: number) {
+        this.rooms[roomId].selectCard(cardId, this.players[socket.id]);
+    }
+
     private onDisconnect(socket: SocketIO.Socket) {
-        console.log('DISCONNECT');
+        console.log('DISCONNECT', socket.id);
         const player = this.players[socket.id];
         if(!player) return;
         for(let roomId of player.activeRoomIds) {
