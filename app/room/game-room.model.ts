@@ -23,7 +23,7 @@ export class GameRoom {
 
     join(socket: SocketIO.Socket, newPlayer: Player) {
         socket.join(this.roomId, (error) => {
-            console.log('PLAYER JOINED', newPlayer.username);
+            console.log('PLAYER', newPlayer.username, 'JOINED IN ROOM', this.roomId);
             this.game.addPlayer(newPlayer);
 
             socket.emit(JOIN_EVENT, this.game.state);
@@ -35,6 +35,7 @@ export class GameRoom {
         console.log(`Player ${player.username} ${disconnected ? 'disconnected' : 'left'}`);
         this.game.removePlayer(player);
         this.emitToRoom(disconnected ? DISCONNECTED_EVENT : LEAVE_EVENT, { username: player.username });
+
     }
 
     start() {

@@ -64,6 +64,7 @@ export class Memory {
         if(!player) return;
         player.removeRoom(roomId);
         this.rooms[roomId].leave(player);
+        socket.leave(roomId);
     }
 
     private onStartGame(roomId: string) {
@@ -81,5 +82,6 @@ export class Memory {
         for(let roomId of player.activeRoomIds) {
             this.rooms[roomId].leave(player, true);
         }
+        socket.leaveAll();
     }
 }
